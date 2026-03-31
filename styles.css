@@ -1,0 +1,143 @@
+/* Premium styling for Infuse injection on TMDB */
+
+/* Common button style for consistency */
+.infuse-btn-common {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ff5722 0%, #e64a19 100%);
+    color: white !important;
+    border-radius: 6px;
+    padding: 4px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 3px 8px rgba(255, 87, 34, 0.3);
+    border: none;
+    gap: 10px;
+    vertical-align: middle;
+}
+
+.infuse-btn-common:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(255, 87, 34, 0.45);
+    background: linear-gradient(135deg, #ff7043 0%, #f4511e 100%);
+}
+
+.infuse-btn-common:active {
+    transform: translateY(1px);
+}
+
+.infuse-btn-common img {
+    margin: 0;
+    padding: 0;
+    border-radius: 3px;
+}
+
+.infuse-btn-text {
+    font-family: inherit;
+    line-height: 1;
+}
+
+/* Header button specific style */
+.infuse-inject-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 8px;
+    margin: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.infuse-inject-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* Specific styling for the JustWatch/OTT filter section injection */
+.ott_filter li.infuse-list-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 12px;
+    height: 48px; /* Match TMDB icons container height */
+}
+
+.infuse-provider-btn {
+    margin-left: 0 !important;
+    padding: 6px 12px;
+}
+
+/* Episode and Season link specific tweaks */
+.infuse-episode-link, .infuse-season-inline-link {
+    margin-left: 12px !important;
+    padding: 3px 8px;
+    font-size: 12px;
+}
+
+.infuse-season-inline-link {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.infuse-season-inline-link:hover {
+    transform: scale(1.05) translateY(-1px);
+}
+
+.infuse-search-result-btn {
+    display: inline-flex !important;
+    margin-top: 4px !important;
+    padding: 3px 10px;
+    font-size: 11px;
+    border-radius: 4px;
+    width: fit-content !important;
+}
+
+.infuse-search-result-btn img {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+/* Container to force the search button to its own line below Name and Date */
+.infuse-search-btn-container {
+    width: 100% !important;
+    display: block !important;
+    clear: both;
+}
+
+/* Ensure search card title area flows naturally */
+.card.v4.tight .details .wrapper .title {
+    position: relative !important;
+    padding-right: 0 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center;
+}
+
+/* Grid Card (Popular, etc.) specific button styling */
+.infuse-grid-btn-container {
+    width: 100% !important;
+    display: block !important;
+    margin-top: 4px;
+}
+
+.infuse-grid-btn {
+    padding: 3px 8px !important;
+    font-size: 11px !important;
+    border-radius: 4px;
+    margin-left: 0 !important; /* Force left alignment */
+    justify-content: flex-start !important;
+}
+
+.infuse-grid-btn img {
+    width: 13px !important;
+    height: 13px !important;
+}
+
+/* Glassmorphism for poster overlays if we add them */
+.card:hover .infuse-poster-overlay {
+    opacity: 1;
+}
