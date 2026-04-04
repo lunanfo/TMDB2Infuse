@@ -90,6 +90,7 @@
 .infuse-search-result-btn {
     display: inline-flex !important;
     margin-top: 4px !important;
+    margin-left: 0 !important; /* Force left alignment with title */
     padding: 3px 10px;
     font-size: 11px;
     border-radius: 4px;

@@ -4,14 +4,42 @@
 
 ---
 
-## 🚀 安装步骤
+## 📸 界面预览 (Screenshots)
+
+### 首页 (Home)
+![Home Preview](./assets/preview_home.jpg)
+
+### 搜索结果 (Search)
+![Search Preview](./assets/preview_search.png)
+
+### 列表页 (Grid)
+![Grid Preview](./assets/preview_grid.jpg)
+
+---
+
+## 🚀 Chrome 安装步骤
 
 1.  **下载源码**：确保本项目的文件夹（`TMDB2Infuse`）已保存在你的电脑上。
 2.  **打开扩展管理**：在 Chrome 浏览器地址栏输入 `chrome://extensions/` 并回车。
 3.  **开启开发者模式**：点击页面右上角的 **“开发者模式”** 开关。
 4.  **加载扩展**：点击左上角的 **“加载已解压的扩展程序”**。
-5.  **选择目录**：在弹出的窗口中选择本项目的主文件夹（即包含 `manifest.json` 的文件夹）。
+5.  **选择目录**：在弹出的窗口中选择本项目下的 **`extension`** 文件夹。
 6.  **完成**：看到 **TMDB2Infuse** 图标出现在列表中即表示安装成功！
+
+---
+
+## 🐒 纂改猴 (Userscript) 安装步骤
+
+> [!TIP]
+> **推荐方式**：**一键安装及自动更新**：
+> [👉 点击一键安装 TMDB to Infuse 脚本](https://github.com/lunanfo/TMDB2Infuse/raw/master/userscript/TMDB2Infuse.user.js)
+
+1.  **安装插件**：确保你的浏览器已安装 [Tampermonkey](https://www.tampermonkey.net/) 扩展。
+2.  **添加脚本**（手动方式）：
+    *   点击 Tampermonkey 图标 -> “添加新脚本”。
+    *   打开本项目中的 `userscript/TMDB2Infuse.user.js` 文件，将其中的代码全部复制。
+    *   将代码粘贴到编辑器中，点击“文件” -> “保存”。
+3.  **完成**：刷新 TMDB 页面即可生效。
 
 ---
 
@@ -56,8 +84,11 @@
 ---
 
 ## 📂 文件结构
-- `manifest.json`: 扩展配置文件。
-- `content.js`: 页面UI注入与逻辑核心。
-- `background.js`: 右键菜单与后台处理。
-- `styles.css`: 精美的按钮样式定义。
-- `icons/infuse.png`: 高清品牌图标。
+- `extension/`: Chrome 浏览器扩展目录。
+    - `manifest.json`: 扩展配置文件。
+    - `content.js`: 页面 UI 注入与逻辑核心。
+    - `background.js`: 右键菜单与后台处理。
+    - `styles.css`: 精美的按钮样式定义。
+    - `icons/`: 高清品牌图标。
+- `userscript/`: 纂改猴脚本目录。
+    - `TMDB2Infuse.user.js`: 单文件版全功能脚本。
