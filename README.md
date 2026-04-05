@@ -28,18 +28,28 @@
 
 ---
 
-## 🐒 纂改猴 (Userscript) 安装步骤
+## 🐒 纂改猴 (Userscript) 安装
 
-> [!TIP]
-> **推荐方式**：**一键安装及自动更新**：
-> [👉 点击一键安装 TMDB to Infuse 脚本](https://github.com/lunanfo/TMDB2Infuse/raw/master/userscript/TMDB2Infuse.user.js)
+### 方式一：一键安装（推荐）
+1.  确保你的浏览器已安装 [Tampermonkey](https://www.tampermonkey.net/) 插件。
+2.  点击下方按钮（徽章）：
 
-1.  **安装插件**：确保你的浏览器已安装 [Tampermonkey](https://www.tampermonkey.net/) 扩展。
-2.  **添加脚本**（手动方式）：
-    *   点击 Tampermonkey 图标 -> “添加新脚本”。
-    *   打开本项目中的 `userscript/TMDB2Infuse.user.js` 文件，将其中的代码全部复制。
-    *   将代码粘贴到编辑器中，点击“文件” -> “保存”。
-3.  **完成**：刷新 TMDB 页面即可生效。
+    [![Install](https://img.shields.io/badge/Install-Tampermonkey-red?style=flat-square&logo=tampermonkey)](https://github.com/lunanfo/TMDB2Infuse/raw/master/userscript/TMDB2Infuse.user.js)
+
+3.  在弹出的页面点击“安装”或“更新”。
+
+### 方式二：手动安装
+1.  打开 Tampermonkey 控制面板，选择“添加新脚本”。
+2.  将本仓库中的 `userscript/TMDB2Infuse.user.js` 内容复制并粘贴。
+3.  保存即可生效。
+
+---
+
+## 📖 使用说明
+
+1.  访问 [themoviedb.org](https://www.themoviedb.org/)。
+2.  在电影、剧集、季度或剧集页面，以及搜索结果中，寻找橙色的 **“Infuse”** 按钮。
+3.  点击该按钮，即可直接在本地或对应的 Infuse 客户端中打开该内容。
 
 ---
 

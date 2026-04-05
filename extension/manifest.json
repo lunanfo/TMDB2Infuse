@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TMDB to Infuse",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "Seamlessly open TMDB movies and shows in Infuse.",
   "permissions": [
     "contextMenus",
@@ -15,9 +15,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.themoviedb.org/*"],
-      "js": ["content.js"],
-      "css": ["styles.css"]
+      "matches": [
+        "https://www.themoviedb.org/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ]
     }
   ],
   "icons": {
@@ -28,8 +34,12 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["icons/infuse.png"],
-      "matches": ["https://www.themoviedb.org/*"]
+      "resources": [
+        "icons/infuse.png"
+      ],
+      "matches": [
+        "https://www.themoviedb.org/*"
+      ]
     }
   ],
   "action": {

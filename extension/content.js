@@ -140,21 +140,13 @@ function injectTVSeasonSections() {
  * Injects Infuse icons into Search Results
  */
 function injectSearchResults() {
-  const searchCards = document.querySelectorAll('div.card.v4.tight');
+  const searchCards = document.querySelectorAll('.search_results div.flex.flex-nowrap, article.card.v4, div.card.v4.search_results, div.card.v4.tight');
   searchCards.forEach(card => {
-    const titleContainer = card.querySelector('.details .wrapper .title');
-    const resultLink = card.querySelector('a.result');
+    const titleContainer = card.querySelector('.details .wrapper .title') || card.querySelector('div.flex.flex-wrap.w-full.flex-wrap');
+    const resultLink = card.querySelector('a.result') || card.querySelector('a.font-normal');
     
     if (titleContainer && resultLink && !isAlreadyInjected(titleContainer)) {
-      const href = resultLink.getAttribute('href');
-      let deepLink = null;
-
-      const movieMatch = href.match(/\/movie\/(\d+)/);
-      if (movieMatch) deepLink = `infuse://movie/${movieMatch[1]}`;
-
-      const tvMatch = href.match(/\/tv\/(\d+)/);
-      if (tvMatch) deepLink = `infuse://series/${tvMatch[1]}`;
-
+      const deepLink = parseTmdbToInfuse(resultLink.getAttribute('href'));
       if (deepLink) {
         const container = document.createElement('div');
         container.className = 'infuse-search-btn-container infuse-icon-injected';
@@ -170,31 +162,20 @@ function injectSearchResults() {
  * Injects Infuse icons into Grid Cards & Homepage Scrollers
  */
 function injectGridCards() {
-  const gridCards = document.querySelectorAll('div.card.style_1');
+  const gridCards = document.querySelectorAll('div.card.style_1, div.comp\\:poster-card, div.comp\\:poster-item, div.comp\\:media-card');
   gridCards.forEach(card => {
-    const content = card.querySelector('.content');
-    // The link might be in h2 or just an 'a' depends on the section
-    const titleLink = card.querySelector('h2 a') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
+    const content = card.querySelector('.content') || card.querySelector('div.mt-2') || card;
+    const titleLink = card.querySelector('h3 a, h2 a, a.font-normal') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
     
     if (content && titleLink && !isAlreadyInjected(content)) {
-      const href = titleLink.getAttribute('href');
-      let deepLink = null;
-
-      const movieMatch = href.match(/\/movie\/(\d+)/);
-      if (movieMatch) deepLink = `infuse://movie/${movieMatch[1]}`;
-
-      const tvMatch = href.match(/\/tv\/(\d+)/);
-      if (tvMatch) deepLink = `infuse://series/${tvMatch[1]}`;
-
+      const deepLink = parseTmdbToInfuse(titleLink.getAttribute('href'));
       if (deepLink) {
         const dateElement = content.querySelector('p');
         const container = document.createElement('div');
         container.className = 'infuse-grid-btn-container infuse-icon-injected';
-        
         const infuseLink = createInfuseIcon(deepLink, 'infuse-grid-btn', '14px');
         container.appendChild(infuseLink);
         
-        // Ensure consistent alignment for grid/homepage cards
         if (dateElement) {
           dateElement.parentNode.insertBefore(container, dateElement.nextSibling);
         } else {
@@ -209,19 +190,31 @@ function injectGridCards() {
  * Helper to get Infuse deep link based on current page URL
  */
 function getDeepLinkForCurrentPage() {
-  const path = window.location.pathname;
-  
-  const movieMatch = path.match(/^\/movie\/(\d+)/);
-  if (movieMatch) return `infuse://movie/${movieMatch[1]}`;
+  return parseTmdbToInfuse(window.location.pathname);
+}
 
-  const episodeMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)\/episode\/(\d+)/);
-  if (episodeMatch) return `infuse://series/${episodeMatch[1]}-${episodeMatch[2]}-${episodeMatch[3]}`;
+/**
+ * Parses a TMDB URL to extract the ID and construct an Infuse deep link.
+ */
+function parseTmdbToInfuse(urlOrPath) {
+    if (!urlOrPath) return null;
+    const path = urlOrPath.startsWith('http') ? new URL(urlOrPath).pathname : urlOrPath;
 
-  const seasonMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)/);
-  if (seasonMatch) return `infuse://series/${seasonMatch[1]}-${seasonMatch[2]}`;
+    // Movie: /movie/123-title
+    const movieMatch = path.match(/^\/movie\/(\d+)/);
+    if (movieMatch) return `infuse://movie/${movieMatch[1]}`;
 
-  const seriesMatch = path.match(/^\/tv\/(\d+)/);
-  if (seriesMatch) return `infuse://series/${seriesMatch[1]}`;
+    // TV Episode: /tv/123-title/season/1/episode/1
+    const episodeMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)\/episode\/(\d+)/);
+    if (episodeMatch) return `infuse://series/${episodeMatch[1]}-${episodeMatch[2]}-${episodeMatch[3]}`;
 
-  return null;
+    // TV Season: /tv/123-title/season/1
+    const seasonMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)/);
+    if (seasonMatch) return `infuse://series/${seasonMatch[1]}-${seasonMatch[2]}`;
+
+    // TV Series: /tv/123-title
+    const seriesMatch = path.match(/^\/tv\/(\d+)/);
+    if (seriesMatch) return `infuse://series/${seriesMatch[1]}`;
+
+    return null;
 }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TMDB to Infuse
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.0.1
 // @description  Seamlessly open TMDB movies and shows in Infuse.
 // @author       xSequip
 // @match        https://www.themoviedb.org/*
@@ -40,6 +40,7 @@
     border: none;
     gap: 10px;
     vertical-align: middle;
+    line-height: normal;
 }
 
 .infuse-btn-common:hover {
@@ -98,6 +99,8 @@
     margin-left: 12px !important;
     padding: 3px 8px;
     font-size: 12px;
+    vertical-align: middle;
+    transform: translateY(-3px);
 }
 
 .infuse-season-inline-link {
@@ -289,10 +292,10 @@
     }
 
     function injectSearchResults() {
-        const searchCards = document.querySelectorAll('div.card.v4.tight');
+        const searchCards = document.querySelectorAll('.search_results div.flex.flex-nowrap, article.card.v4, div.card.v4.search_results');
         searchCards.forEach(card => {
-            const titleContainer = card.querySelector('.details .wrapper .title');
-            const resultLink = card.querySelector('a.result');
+            const titleContainer = card.querySelector('.details .wrapper .title') || card.querySelector('div.flex.flex-wrap.w-full.flex-wrap');
+            const resultLink = card.querySelector('a.result') || card.querySelector('a.font-normal');
             if (titleContainer && resultLink && !isAlreadyInjected(titleContainer)) {
                 const deepLink = parseTmdbToInfuse(resultLink.getAttribute('href'));
                 if (deepLink) {
@@ -307,10 +310,10 @@
     }
 
     function injectGridCards() {
-        const gridCards = document.querySelectorAll('div.card.style_1');
+        const gridCards = document.querySelectorAll('div.card.style_1, div.comp\\:poster-card, div.comp\\:poster-item, div.comp\\:media-card');
         gridCards.forEach(card => {
-            const content = card.querySelector('.content');
-            const titleLink = card.querySelector('h2 a') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
+            const content = card.querySelector('.content') || card.querySelector('div.mt-2') || card;
+            const titleLink = card.querySelector('h3 a, h2 a, a.font-normal') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
             if (content && titleLink && !isAlreadyInjected(content)) {
                 const deepLink = parseTmdbToInfuse(titleLink.getAttribute('href'));
                 if (deepLink) {
