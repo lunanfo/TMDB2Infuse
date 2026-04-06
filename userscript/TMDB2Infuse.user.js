@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TMDB to Infuse
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description  Seamlessly open TMDB movies and shows in Infuse.
 // @author       xSequip
 // @match        https://www.themoviedb.org/*
@@ -155,9 +155,31 @@
     border-radius: 4px;
     margin-left: 0 !important; /* Force left alignment */
     justify-content: flex-start !important;
+    gap: 8px !important;
 }
 
 .infuse-grid-btn img {
+    width: 13px !important;
+    height: 13px !important;
+}
+
+/* Recommendation Card specific button styling */
+.infuse-recommendation-btn-container {
+    width: 100% !important;
+    display: block !important;
+    margin-top: 4px;
+}
+
+.infuse-recommendation-btn {
+    padding: 3px 8px !important;
+    font-size: 11px !important;
+    border-radius: 4px;
+    margin-left: 0 !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+}
+
+.infuse-recommendation-btn img {
     width: 13px !important;
     height: 13px !important;
 }
@@ -224,6 +246,7 @@
         injectTVSeasonSections();
         injectSearchResults();
         injectGridCards();
+        injectRecommendations();
     }
 
     function injectWhereToWatch() {
@@ -327,6 +350,24 @@
                     } else {
                         content.appendChild(container);
                     }
+                }
+            }
+        });
+    }
+
+    function injectRecommendations() {
+        const recommendationCards = document.querySelectorAll('#recommendation_scroller .item.mini_card');
+        recommendationCards.forEach(card => {
+            const info = card.querySelector('.info') || card;
+            const titleLink = card.querySelector('a.title') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
+            if (info && titleLink && !isAlreadyInjected(info)) {
+                const deepLink = parseTmdbToInfuse(titleLink.getAttribute('href'));
+                if (deepLink) {
+                    const btnContainer = document.createElement('div');
+                    btnContainer.className = 'infuse-recommendation-btn-container infuse-icon-injected';
+                    const infuseLink = createInfuseIcon(deepLink, 'infuse-recommendation-btn', '13px');
+                    btnContainer.appendChild(infuseLink);
+                    info.appendChild(btnContainer); // Append to the info box, not directly into the p.flex row
                 }
             }
         });

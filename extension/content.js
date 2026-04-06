@@ -20,7 +20,7 @@ function createInfuseIcon(deepLink, className, size = '16px', showText = true) {
   const a = document.createElement('a');
   a.className = `${className} infuse-icon-injected infuse-btn-common`;
   a.href = deepLink;
-  
+
   a.innerHTML = `
     <img src="${INFUSE_ICON_URL}" style="width:${size}; height:${size};" />
     ${showText ? '<span class="infuse-btn-text">Infuse</span>' : ''}
@@ -46,6 +46,7 @@ function injectInfuseUI() {
   injectTVSeasonSections();
   injectSearchResults();
   injectGridCards();
+  injectRecommendations();
 }
 
 /**
@@ -144,7 +145,7 @@ function injectSearchResults() {
   searchCards.forEach(card => {
     const titleContainer = card.querySelector('.details .wrapper .title') || card.querySelector('div.flex.flex-wrap.w-full.flex-wrap');
     const resultLink = card.querySelector('a.result') || card.querySelector('a.font-normal');
-    
+
     if (titleContainer && resultLink && !isAlreadyInjected(titleContainer)) {
       const deepLink = parseTmdbToInfuse(resultLink.getAttribute('href'));
       if (deepLink) {
@@ -166,7 +167,7 @@ function injectGridCards() {
   gridCards.forEach(card => {
     const content = card.querySelector('.content') || card.querySelector('div.mt-2') || card;
     const titleLink = card.querySelector('h3 a, h2 a, a.font-normal') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
-    
+
     if (content && titleLink && !isAlreadyInjected(content)) {
       const deepLink = parseTmdbToInfuse(titleLink.getAttribute('href'));
       if (deepLink) {
@@ -175,12 +176,34 @@ function injectGridCards() {
         container.className = 'infuse-grid-btn-container infuse-icon-injected';
         const infuseLink = createInfuseIcon(deepLink, 'infuse-grid-btn', '14px');
         container.appendChild(infuseLink);
-        
+
         if (dateElement) {
           dateElement.parentNode.insertBefore(container, dateElement.nextSibling);
         } else {
           content.appendChild(container);
         }
+      }
+    }
+  });
+}
+
+/**
+ * Injects Infuse icons into Recommendations scroller
+ */
+function injectRecommendations() {
+  const recommendationCards = document.querySelectorAll('#recommendation_scroller .item.mini_card');
+  recommendationCards.forEach(card => {
+    const info = card.querySelector('.info') || card;
+    const titleLink = card.querySelector('a.title') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
+
+    if (info && titleLink && !isAlreadyInjected(info)) {
+      const deepLink = parseTmdbToInfuse(titleLink.getAttribute('href'));
+      if (deepLink) {
+        const btnContainer = document.createElement('div');
+        btnContainer.className = 'infuse-recommendation-btn-container infuse-icon-injected';
+        const infuseLink = createInfuseIcon(deepLink, 'infuse-recommendation-btn', '13px');
+        btnContainer.appendChild(infuseLink);
+        info.appendChild(btnContainer); // Append below the main info box/title row
       }
     }
   });
@@ -197,24 +220,24 @@ function getDeepLinkForCurrentPage() {
  * Parses a TMDB URL to extract the ID and construct an Infuse deep link.
  */
 function parseTmdbToInfuse(urlOrPath) {
-    if (!urlOrPath) return null;
-    const path = urlOrPath.startsWith('http') ? new URL(urlOrPath).pathname : urlOrPath;
+  if (!urlOrPath) return null;
+  const path = urlOrPath.startsWith('http') ? new URL(urlOrPath).pathname : urlOrPath;
 
-    // Movie: /movie/123-title
-    const movieMatch = path.match(/^\/movie\/(\d+)/);
-    if (movieMatch) return `infuse://movie/${movieMatch[1]}`;
+  // Movie: /movie/123-title
+  const movieMatch = path.match(/^\/movie\/(\d+)/);
+  if (movieMatch) return `infuse://movie/${movieMatch[1]}`;
 
-    // TV Episode: /tv/123-title/season/1/episode/1
-    const episodeMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)\/episode\/(\d+)/);
-    if (episodeMatch) return `infuse://series/${episodeMatch[1]}-${episodeMatch[2]}-${episodeMatch[3]}`;
+  // TV Episode: /tv/123-title/season/1/episode/1
+  const episodeMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)\/episode\/(\d+)/);
+  if (episodeMatch) return `infuse://series/${episodeMatch[1]}-${episodeMatch[2]}-${episodeMatch[3]}`;
 
-    // TV Season: /tv/123-title/season/1
-    const seasonMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)/);
-    if (seasonMatch) return `infuse://series/${seasonMatch[1]}-${seasonMatch[2]}`;
+  // TV Season: /tv/123-title/season/1
+  const seasonMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)/);
+  if (seasonMatch) return `infuse://series/${seasonMatch[1]}-${seasonMatch[2]}`;
 
-    // TV Series: /tv/123-title
-    const seriesMatch = path.match(/^\/tv\/(\d+)/);
-    if (seriesMatch) return `infuse://series/${seriesMatch[1]}`;
+  // TV Series: /tv/123-title
+  const seriesMatch = path.match(/^\/tv\/(\d+)/);
+  if (seriesMatch) return `infuse://series/${seriesMatch[1]}`;
 
-    return null;
+  return null;
 }

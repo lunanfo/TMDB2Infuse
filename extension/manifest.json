@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TMDB to Infuse",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Seamlessly open TMDB movies and shows in Infuse.",
   "permissions": [
     "contextMenus",
