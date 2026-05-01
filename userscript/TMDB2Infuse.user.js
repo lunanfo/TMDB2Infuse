@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TMDB to Infuse
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
+// @version      1.0.3
 // @description  Seamlessly open TMDB movies and shows in Infuse.
 // @author       xSequip
 // @match        https://www.themoviedb.org/*
@@ -335,12 +335,14 @@
     function injectGridCards() {
         const gridCards = document.querySelectorAll('div.card.style_1, div.comp\\:poster-card, div.comp\\:poster-item, div.comp\\:media-card');
         gridCards.forEach(card => {
-            const content = card.querySelector('.content') || card.querySelector('div.mt-2') || card;
+            // Find the TEXT container: the div with px-3 (Tailwind) or .content (legacy)
+            const content = card.querySelector('.content') || card.querySelector('div[class*="px-"]') || card;
             const titleLink = card.querySelector('h3 a, h2 a, a.font-normal') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
             if (content && titleLink && !isAlreadyInjected(content)) {
                 const deepLink = parseTmdbToInfuse(titleLink.getAttribute('href'));
                 if (deepLink) {
-                    const dateElement = content.querySelector('p');
+                    // Find date: span.subheader (new Tailwind) or p (legacy)
+                    const dateElement = content.querySelector('span.subheader') || content.querySelector('p');
                     const container = document.createElement('div');
                     container.className = 'infuse-grid-btn-container infuse-icon-injected';
                     const infuseLink = createInfuseIcon(deepLink, 'infuse-grid-btn', '14px');
