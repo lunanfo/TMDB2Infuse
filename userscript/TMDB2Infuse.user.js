@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TMDB to Infuse
 // @namespace    http://tampermonkey.net/
-// @version      1.0.3
+// @version      1.0.4
 // @description  Seamlessly open TMDB movies and shows in Infuse.
 // @author       xSequip
 // @match        https://www.themoviedb.org/*
@@ -146,16 +146,19 @@
 .infuse-grid-btn-container {
     width: 100% !important;
     display: block !important;
-    margin-top: 4px;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1;
 }
 
 .infuse-grid-btn {
     padding: 3px 8px !important;
     font-size: 11px !important;
     border-radius: 4px;
-    margin-left: 0 !important; /* Force left alignment */
+    margin: 0 !important; /* Force left alignment and match TMDB card spacing */
     justify-content: flex-start !important;
     gap: 8px !important;
+    line-height: 1 !important;
 }
 
 .infuse-grid-btn img {
