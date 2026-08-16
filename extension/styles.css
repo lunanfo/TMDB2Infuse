@@ -125,7 +125,7 @@
 .infuse-grid-btn-container {
     width: 100% !important;
     display: block !important;
-    margin: 0 !important;
+    margin: 4px 0 0 0 !important;
     padding: 0 !important;
     line-height: 1;
 }
@@ -138,6 +138,7 @@
     justify-content: flex-start !important;
     gap: 8px !important;
     line-height: 1 !important;
+    width: fit-content !important;
 }
 
 .infuse-grid-btn img {

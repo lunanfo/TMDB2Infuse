@@ -10,7 +10,8 @@ const INFUSE_ICON_URL = chrome.runtime.getURL('icons/infuse.png');
  * Robust check if an Infuse icon is already injected in a container
  */
 function isAlreadyInjected(container) {
-  return container.querySelector('.infuse-icon-injected') !== null;
+  if (!container) return false;
+  return container.querySelector('.infuse-icon-injected') !== null || container.classList.contains('infuse-icon-injected');
 }
 
 /**
@@ -30,7 +31,6 @@ function createInfuseIcon(deepLink, className, size = '16px', showText = true) {
 
 // Observe the DOM for dynamic sections or pages
 const observer = new MutationObserver((mutations) => {
-  // Use a slight throttle/debounce if needed, but for now direct call is fine
   injectInfuseUI();
 });
 
@@ -53,7 +53,7 @@ function injectInfuseUI() {
  * Injects Infuse icon into "Where to Watch" (OTT) section
  */
 function injectWhereToWatch() {
-  const providersLists = document.querySelectorAll('ul.ott_filter');
+  const providersLists = document.querySelectorAll('ul.ott_filter, ul.providers');
   providersLists.forEach(list => {
     if (isAlreadyInjected(list)) return;
 
@@ -141,12 +141,20 @@ function injectTVSeasonSections() {
  * Injects Infuse icons into Search Results
  */
 function injectSearchResults() {
-  const searchCards = document.querySelectorAll('.search_results div.flex.flex-nowrap, article.card.v4, div.card.v4.search_results, div.card.v4.tight');
+  const searchCards = document.querySelectorAll(`
+    div.comp\\:media-card,
+    .search_results div.flex.flex-nowrap,
+    article.card.v4,
+    div.card.v4.search_results,
+    div.card.v4.tight
+  `);
   searchCards.forEach(card => {
-    const titleContainer = card.querySelector('.details .wrapper .title') || card.querySelector('div.flex.flex-wrap.w-full.flex-wrap');
-    const resultLink = card.querySelector('a.result') || card.querySelector('a.font-normal');
+    if (isAlreadyInjected(card)) return;
 
-    if (titleContainer && resultLink && !isAlreadyInjected(titleContainer)) {
+    const titleContainer = card.querySelector('.details .wrapper .title, div.flex.flex-wrap.w-full, div.flex-wrap.w-full') || card;
+    const resultLink = card.querySelector('a.result, a.font-normal, h2 a, h3 a') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
+
+    if (resultLink) {
       const deepLink = parseTmdbToInfuse(resultLink.getAttribute('href'));
       if (deepLink) {
         const container = document.createElement('div');
@@ -160,26 +168,35 @@ function injectSearchResults() {
 }
 
 /**
- * Injects Infuse icons into Grid Cards & Homepage Scrollers
+ * Injects Infuse icons into Grid Cards, Discover / Movie / TV lists & Homepage Scrollers
  */
 function injectGridCards() {
-  const gridCards = document.querySelectorAll('div.card.style_1, div.comp\\:poster-card, div.comp\\:poster-item, div.comp\\:media-card');
+  const gridCards = document.querySelectorAll(`
+    div.card.style_1,
+    div.comp\\:poster-card,
+    div.comp\\:poster-item,
+    .media-list-results > div,
+    .media-card-list > div[data-object-id],
+    #known_for_scroller li
+  `);
   gridCards.forEach(card => {
-    // Find the TEXT container: the div with px-3 (Tailwind) or .content (legacy)
-    const content = card.querySelector('.content') || card.querySelector('div[class*="px-"]') || card;
-    const titleLink = card.querySelector('h3 a, h2 a, a.font-normal') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
+    if (isAlreadyInjected(card)) return;
 
-    if (content && titleLink && !isAlreadyInjected(content)) {
+    // Find the TEXT container: Tailwind pt-2/px-3, .content (legacy), mt-2 (scrollers), or card itself
+    const content = card.querySelector('.content, div[class*="px-"], div.mt-2, p, .w-full.pt-2') || card;
+    const titleLink = card.querySelector('h3 a, h2 a, a.font-normal, a.title, p a') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
+
+    if (titleLink) {
       const deepLink = parseTmdbToInfuse(titleLink.getAttribute('href'));
       if (deepLink) {
-        // Find date: span.subheader (new Tailwind) or p (legacy)
-        const dateElement = content.querySelector('span.subheader') || content.querySelector('p');
+        // Find date element
+        const dateElement = content.querySelector('.release_date, span.release_date, span.subheader, p');
         const container = document.createElement('div');
         container.className = 'infuse-grid-btn-container infuse-icon-injected';
         const infuseLink = createInfuseIcon(deepLink, 'infuse-grid-btn', '14px');
         container.appendChild(infuseLink);
 
-        if (dateElement) {
+        if (dateElement && dateElement.parentNode) {
           dateElement.parentNode.insertBefore(container, dateElement.nextSibling);
         } else {
           content.appendChild(container);
@@ -193,12 +210,14 @@ function injectGridCards() {
  * Injects Infuse icons into Recommendations scroller
  */
 function injectRecommendations() {
-  const recommendationCards = document.querySelectorAll('#recommendation_scroller .item.mini_card');
+  const recommendationCards = document.querySelectorAll('#recommendation_scroller .item.mini_card, #recommendation_waypoint .item.mini_card');
   recommendationCards.forEach(card => {
-    const info = card.querySelector('.info') || card;
+    if (isAlreadyInjected(card)) return;
+
+    const info = card.querySelector('.info, p.movie, p.flex') || card;
     const titleLink = card.querySelector('a.title') || card.querySelector('a[href*="/movie/"], a[href*="/tv/"]');
 
-    if (info && titleLink && !isAlreadyInjected(info)) {
+    if (titleLink) {
       const deepLink = parseTmdbToInfuse(titleLink.getAttribute('href'));
       if (deepLink) {
         const btnContainer = document.createElement('div');
@@ -223,23 +242,27 @@ function getDeepLinkForCurrentPage() {
  */
 function parseTmdbToInfuse(urlOrPath) {
   if (!urlOrPath) return null;
-  const path = urlOrPath.startsWith('http') ? new URL(urlOrPath).pathname : urlOrPath;
+  try {
+    const path = urlOrPath.startsWith('http') ? new URL(urlOrPath).pathname : urlOrPath.split('?')[0].split('#')[0];
 
-  // Movie: /movie/123-title
-  const movieMatch = path.match(/^\/movie\/(\d+)/);
-  if (movieMatch) return `infuse://movie/${movieMatch[1]}`;
+    // Movie: /movie/123-title
+    const movieMatch = path.match(/^\/movie\/(\d+)/);
+    if (movieMatch) return `infuse://movie/${movieMatch[1]}`;
 
-  // TV Episode: /tv/123-title/season/1/episode/1
-  const episodeMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)\/episode\/(\d+)/);
-  if (episodeMatch) return `infuse://series/${episodeMatch[1]}-${episodeMatch[2]}-${episodeMatch[3]}`;
+    // TV Episode: /tv/123-title/season/1/episode/1
+    const episodeMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)\/episode\/(\d+)/);
+    if (episodeMatch) return `infuse://series/${episodeMatch[1]}-${episodeMatch[2]}-${episodeMatch[3]}`;
 
-  // TV Season: /tv/123-title/season/1
-  const seasonMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)/);
-  if (seasonMatch) return `infuse://series/${seasonMatch[1]}-${seasonMatch[2]}`;
+    // TV Season: /tv/123-title/season/1
+    const seasonMatch = path.match(/^\/tv\/(\d+)[^/]*\/season\/(\d+)/);
+    if (seasonMatch) return `infuse://series/${seasonMatch[1]}-${seasonMatch[2]}`;
 
-  // TV Series: /tv/123-title
-  const seriesMatch = path.match(/^\/tv\/(\d+)/);
-  if (seriesMatch) return `infuse://series/${seriesMatch[1]}`;
+    // TV Series: /tv/123-title
+    const seriesMatch = path.match(/^\/tv\/(\d+)/);
+    if (seriesMatch) return `infuse://series/${seriesMatch[1]}`;
 
-  return null;
+    return null;
+  } catch (e) {
+    return null;
+  }
 }
