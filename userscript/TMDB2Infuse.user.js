@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TMDB to Infuse
 // @namespace    http://tampermonkey.net/
-// @version      1.0.5
+// @version      1.0.6
 // @description  Seamlessly open TMDB movies and shows in Infuse.
 // @author       xSequip
 // @match        https://www.themoviedb.org/*
@@ -165,6 +165,13 @@
 .infuse-grid-btn img {
     width: 13px !important;
     height: 13px !important;
+}
+
+/* Fix: Force TMDB recommendation card p-container to allow flex wrapping */
+#recommendation_scroller .item.mini_card p.tv.flex,
+#recommendation_waypoint .item.mini_card p.tv.flex,
+p.tv.flex {
+    flex-wrap: wrap !important;
 }
 
 /* Recommendation Card specific button styling */

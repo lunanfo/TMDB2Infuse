@@ -146,6 +146,13 @@
     height: 13px !important;
 }
 
+/* Fix: Force TMDB recommendation card p-container to allow flex wrapping */
+#recommendation_scroller .item.mini_card p.tv.flex,
+#recommendation_waypoint .item.mini_card p.tv.flex,
+p.tv.flex {
+    flex-wrap: wrap !important;
+}
+
 /* Recommendation Card specific button styling */
 .infuse-recommendation-btn-container {
     width: 100% !important;
