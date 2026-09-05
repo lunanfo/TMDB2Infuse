@@ -65,7 +65,8 @@
     display: inline-flex;
     align-items: center;
     margin-right: 12px;
-    height: 48px; /* Match TMDB icons container height */
+    height: 48px;
+    /* Match TMDB icons container height */
 }
 
 .infuse-provider-btn {
@@ -74,7 +75,8 @@
 }
 
 /* Episode and Season link specific tweaks */
-.infuse-episode-link, .infuse-season-inline-link {
+.infuse-episode-link,
+.infuse-season-inline-link {
     margin-left: 12px !important;
     padding: 3px 8px;
     font-size: 12px;
@@ -93,7 +95,8 @@
 .infuse-search-result-btn {
     display: inline-flex !important;
     margin-top: 4px !important;
-    margin-left: 0 !important; /* Force left alignment with title */
+    margin-left: 0 !important;
+    /* Force left alignment with title */
     padding: 3px 10px;
     font-size: 11px;
     border-radius: 4px;
@@ -134,7 +137,8 @@
     padding: 3px 8px !important;
     font-size: 11px !important;
     border-radius: 4px;
-    margin: 0 !important; /* Force left alignment and match TMDB card spacing */
+    margin: 0 !important;
+    /* Force left alignment and match TMDB card spacing */
     justify-content: flex-start !important;
     gap: 8px !important;
     line-height: 1 !important;
@@ -149,6 +153,9 @@
 /* Fix: Force TMDB recommendation card p-container to allow flex wrapping */
 #recommendation_scroller .item.mini_card p.tv.flex,
 #recommendation_waypoint .item.mini_card p.tv.flex,
+.item.mini_card p.movie.flex,
+.item.mini_card p.tv.flex,
+p.movie.flex,
 p.tv.flex {
     flex-wrap: wrap !important;
 }
