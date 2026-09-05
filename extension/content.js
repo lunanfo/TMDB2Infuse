@@ -198,6 +198,8 @@ function injectGridCards() {
 
         if (dateElement && dateElement.parentNode) {
           dateElement.parentNode.insertBefore(container, dateElement.nextSibling);
+        } else if (content.tagName === 'P' && content.parentNode) {
+          content.parentNode.insertBefore(container, content.nextSibling);
         } else {
           content.appendChild(container);
         }

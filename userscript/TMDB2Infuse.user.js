@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TMDB to Infuse
 // @namespace    http://tampermonkey.net/
-// @version      1.0.7
+// @version      1.0.8
 // @description  Seamlessly open TMDB movies and shows in Infuse.
 // @author       xSequip
 // @match        https://www.themoviedb.org/*
@@ -23,9 +23,18 @@
     const css = `
 /* Common button style for consistency */
 .infuse-btn-common {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    height: auto !important;
+    min-height: unset !important;
+    max-height: unset !important;
+    min-width: unset !important;
+    width: fit-content !important;
+    box-sizing: border-box !important;
     background: linear-gradient(135deg, #ff5722 0%, #e64a19 100%);
     color: white !important;
     border-radius: 6px;
@@ -54,14 +63,20 @@
 }
 
 .infuse-btn-common img {
-    margin: 0;
-    padding: 0;
-    border-radius: 3px;
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 3px !important;
+    flex-shrink: 0 !important;
+    max-width: unset !important;
+    max-height: unset !important;
 }
 
 .infuse-btn-text {
     font-family: inherit;
     line-height: 1;
+    white-space: nowrap !important;
+    display: inline-block !important;
 }
 
 /* Header button specific style */
@@ -165,6 +180,35 @@
 .infuse-grid-btn img {
     width: 13px !important;
     height: 13px !important;
+}
+
+/* Known For scroller (Person page) specific tweaks */
+ul.horizontal_media_list li a.infuse-grid-btn {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    width: fit-content !important;
+    min-width: unset !important;
+    height: auto !important;
+    max-height: unset !important;
+    justify-content: center !important;
+    margin: 4px auto 0 auto !important;
+}
+
+ul.horizontal_media_list li .infuse-grid-btn-container {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 4px !important;
+    text-align: center !important;
+}
+
+ul.horizontal_media_list li a.infuse-grid-btn img {
+    display: inline-block !important;
+    width: 13px !important;
+    height: 13px !important;
+    flex-shrink: 0 !important;
 }
 
 /* Fix: Force TMDB recommendation card p-container to allow flex wrapping */
@@ -393,6 +437,8 @@ p.tv.flex {
 
                     if (dateElement && dateElement.parentNode) {
                         dateElement.parentNode.insertBefore(container, dateElement.nextSibling);
+                    } else if (content.tagName === 'P' && content.parentNode) {
+                        content.parentNode.insertBefore(container, content.nextSibling);
                     } else {
                         content.appendChild(container);
                     }
